@@ -7,7 +7,7 @@
 		"metadata": {
 			"name": "Void's Mod Loader",
 			"description": "a hopefully simple (tm) utility to download and update mods for BBSMP",
-			"license":"MIT"
+			"license": "MIT",
 			"contributors": {
 				"Void & Caffeine": "Owner"
 			},
@@ -15,7 +15,7 @@
 				"homepage": "https://github.com/VoidAndCaffeine/mod-loader",
 				"issues": "https://github.com/VoidAndCaffeine/mod-loader/issues",
 				"sources": "https://github.com/VoidAndCaffeine/mod-loader"
-			},
+			}
 		},
 		"intermediate_mappings": "net.fabricmc:intermediary",
 		"entrypoints": {
