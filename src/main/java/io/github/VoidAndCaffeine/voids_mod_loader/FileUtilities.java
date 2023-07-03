@@ -21,12 +21,11 @@ public class FileUtilities {
     private static File VMlStaging = new File("VMLStaging");
 
     public static boolean downloadFile(URL url,String fileName){
-
             File file = new File(VMlStaging,fileName);
         try {
 
             if(!VMlStaging.exists()){
-                VMlStaging.createNewFile();
+                VMlStaging.mkdirs();
             }
             if(!file.exists()){
                 file.createNewFile();
@@ -48,20 +47,24 @@ public class FileUtilities {
 
     }
 
-    public static String[][] processVFile(){
+    public static String[][] processVFile(int mode){
         try {
             URL vFileURL = new URL("https://raw.githubusercontent.com/VoidAndCaffeine/mods-versions-file/main/mods.versions");
 
-            //downloadFile(vFileURL,"mods.versions");
-            //File dnlfile = new File("mods.versions");
-            
-            //FileInputStream fin = new FileInputStream(dnlfile);
             //VMLlog.info("file found");;
-            ObjectInputStream in = new ObjectInputStream(vFileURL.openStream());
-            VMLlog.info("created input stream");;
+            InputStream workingStream = null;
+            if(mode == 0){
+                workingStream = vFileURL.openStream();
+            }else if(mode == 1){
+                File localVfile = new File(VMlStaging,"mods.versions");
+                FileInputStream fin = new FileInputStream(localVfile);
+                workingStream = fin;
+            }
+            ObjectInputStream in = new ObjectInputStream(workingStream);
+            VMLlog.info("[VML] Created Object input stream");;
             
             String[][] working = (String[][]) in.readObject();
-            VMLlog.info("stream to string");;
+            VMLlog.info("[VML] Stream to string");;
             return working;
         } catch (IOException g) {
             VMLlog.error("io exception in processVFile, you souldent see this. if you do, panic, then @me -- void");;
