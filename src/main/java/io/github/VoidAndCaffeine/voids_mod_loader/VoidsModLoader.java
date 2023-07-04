@@ -67,17 +67,26 @@ public class VoidsModLoader implements ModInitializer {
 
 		if(doUpdate || forceUpdate){
 			downloadUpdates(mods);
-		}
-		if (doUpdate || forceUpdate) {
     		vFileURL = new URL("https://raw.githubusercontent.com/VoidAndCaffeine/mods-versions-file/main/mods.versions");
 			FileUtilities.downloadFile(vFileURL, vFileV);
+			/* 
+
+			if (FileUtilities.moveToMods(mods)) {
+				UpdateNotification.updatedScreen t = new UpdateNotification.updatedScreen("Mods have been updated and moved to your mods folder \n Press [OK] to close Minecraft and apply the update. \n \n Isn't this much less work :) -void");
+				t.dispose();
+				System.exit(0);
+
+			} else {
+				UpdateNotification.updatedScreen t = new UpdateNotification.updatedScreen("Mods have been updated. \n\n Press [OK] to close Minecraft. \n Then go to your minecraft folder. \n move **everything** from the VMLStaging folder to the mods folder \n Lastly restart minecraft \n\n @me on discord if you have any issues -void\n");
+				t.dispose();
+				System.exit(-1);
+			}*/
 		}
 		
 		if(dummyFile.exists()){
-			UpdateNotification.updatedScreen t = new UpdateNotification.updatedScreen();
+			UpdateNotification.updatedScreen t = new UpdateNotification.updatedScreen("Mods have been updated. \n\n Press [OK] to close Minecraft. \n Then go to your minecraft folder. \n move **everything** from the VMLStaging folder to the mods folder \n Lastly restart minecraft \n\n @me on discord if you have any issues -void\n");
 			t.dispose();
 			System.exit(0);
-
 		}
 
 		} catch (Exception e) {

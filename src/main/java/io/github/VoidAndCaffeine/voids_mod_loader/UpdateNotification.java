@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
  */
 public class UpdateNotification {   
     public static class updatedScreen extends JFrame {
-        public updatedScreen(){
+        public updatedScreen(String message){
             this.setTitle("Mod Update Complete");
             this.setLocationRelativeTo(null);
             this.setAlwaysOnTop(true);
@@ -18,7 +18,7 @@ public class UpdateNotification {
             this.setBackground(new Color(255,255,255,255));
             this.setVisible(true);
 
-            JOptionPane.showMessageDialog(null,"Mods have been updated. \n\n Please close Minecraft. \n Then go to your minecraft folder. \n move **everything** from the VMLStaging folder to the mods folder \n Lastly restart minecraft \n\n @me on discord if you have any issues -void\n");
+            JOptionPane.showMessageDialog(null,message);
         }
     }
 } 

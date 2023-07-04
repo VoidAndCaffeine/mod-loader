@@ -40,6 +40,34 @@ public class FileUtilities {
         }
         return false;
     }
+
+    public static boolean moveToMods(String[][] mods){
+        try {
+            for (int i = 0; i < mods.length; i++) {
+                File stagedFile = new File(VMlStaging,mods[i][1]);
+                File destFile = new File(modsFolder,mods[i][1]);
+                if(!destFile.exists()){
+                    destFile.createNewFile();
+                }
+
+                stagedFile.renameTo(destFile);
+            }
+
+            /*
+            File dummyFile1 = new File(VMlStaging,mods[0][1]);
+            File dummyFile2 = new File(modsFolder,mods[0][1]);
+            dummyFile1.delete();
+            dummyFile2.delete();
+            */
+
+            return true;
+        } catch (Exception e) {
+
+            VMLlog.error("[VML]really wish this worked :'() {}",e); 
+            return false;
+        }
+    }
+
     public static void downloadFile(URL url,File file) throws FileNotFoundException, IOException{
         if(!file.exists()){
             file.createNewFile();
