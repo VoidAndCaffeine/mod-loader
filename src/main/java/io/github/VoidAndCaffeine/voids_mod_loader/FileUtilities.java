@@ -49,17 +49,15 @@ public class FileUtilities {
        
     }
 
-    public static void obOut(Object o, String filename) throws FileNotFoundException, IOException{
-        FileOutputStream fs = new FileOutputStream(filename);
-        ObjectOutputStream out = new ObjectOutputStream(fs);
-        out.writeObject(o);
-        out.close();
-    }
-
-    public static Object obIN(File file) throws FileNotFoundException, IOException{
-        FileInputStream fin = new FileInputStream(file);
-        ObjectInputStream oin = new ObjectInputStream(fin);
-        return oin;
+    public static String[][] obIN(File file) throws FileNotFoundException, IOException{
+        try {
+            FileInputStream fin = new FileInputStream(file);
+            ObjectInputStream oin = new ObjectInputStream(fin);
+            return (String[][]) oin.readObject();
+    
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static String[][] processVFile(){

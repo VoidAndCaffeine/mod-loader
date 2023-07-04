@@ -17,8 +17,12 @@ public class VoidsModLoader implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger VMLlog = LoggerFactory.getLogger("Void's Mod Loader");
     private static File VMlStaging = new File("VMLStaging");
+
+	private URL vFileURL;
+
 	private String[][] mods;
-	private File vFileV = new File("mods.versions");
+	private String[][] localModsMD;
+	private File vFileV = new File(VMlStaging, "mods.versions");
 	private boolean doUpdate;
 	private boolean forceUpdate = false;
 
@@ -34,20 +38,21 @@ public class VoidsModLoader implements ModInitializer {
 		VMLlog.info("[VML] Imported vfile from github");
 
 		if(vFileV.exists()){
-			String verF = (String) FileUtilities.obIN(vFileV);
-			if(mods[0][2].equals(verF)){
+			localModsMD = FileUtilities.obIN(vFileV);
+			String verF = localModsMD[0][2];
+			if(Integer.parseInt(mods[0][2]) <= Integer.parseInt(verF)){
 				doUpdate = false;
 				VMLlog.info("[VML] no updates found.");
+				VMLlog.info("[VML] local vfile version {}, remote vfile version {}",Integer.parseInt(verF),Integer.parseInt(mods[0][2]));
 			} else{
 				doUpdate = true;
-
 				VMLlog.info("[VML] updates found.");
 			}
 		} else{
 			downloadUpdates(mods);
+			VMLlog.info("[VML] Performing first install.");
 			doUpdate = forceUpdate = true;
-
-			VMLlog.info("[VML] Done performing first install.");
+			VMLlog.info("[VML] Completed first install.");
 		}
 
 		if(new File("FORCEUPDATE.txt").exists()){
@@ -57,14 +62,16 @@ public class VoidsModLoader implements ModInitializer {
 		}
 
 		if(doUpdate && !(forceUpdate)){
-			downloadUpdates(findUpdates());
+			downloadUpdates(mods);
 		}
-
-		FileUtilities.downloadFile(, vFileV);
+		if (doUpdate) {
+    		vFileURL = new URL("https://raw.githubusercontent.com/VoidAndCaffeine/mods-versions-file/main/mods.versions");
+			FileUtilities.downloadMod(vFileURL, "mods.versions");
+		}
 
 		} catch (Exception e) {
 
-				VMLlog.error("[VML] Something went wrong and idk what :D -void");
+				VMLlog.error("[VML] Something went wrong and idk what :D -void {}", e);
 			// TODO: handle exception
 		}
 		//VMLlog.info("Hello Quilt world from {}!", modsV[0][0]);
@@ -78,6 +85,7 @@ public class VoidsModLoader implements ModInitializer {
 		
 	}
 
+		/*
 	private String[][] findUpdates(){
 		String[][] toReturn = new String[Integer.parseInt(mods[0][0])][4];
 		int nextEmpty = 0;
@@ -90,7 +98,6 @@ public class VoidsModLoader implements ModInitializer {
 
 		return toReturn;
 
-		/*
 		String[][] buffer = new String[modsVNew.length][4];
 		int nextEmpty = 0;
 		if(modsVNew.length>modsVOld.length){
@@ -112,9 +119,9 @@ public class VoidsModLoader implements ModInitializer {
 			toReutrn[i]= buffer[i];
 		}
 		return toReutrn;
-		*/
 	}
 
+		*/
 	private void downloadUpdates(String[][] updates){
 
 		for (int i = 0; i < updates.length; i++) {
