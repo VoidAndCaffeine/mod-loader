@@ -67,24 +67,21 @@ public class VoidsModLoader implements ModInitializer {
 
 		if(doUpdate || forceUpdate){
 			downloadUpdates(mods);
-    		vFileURL = new URL("https://raw.githubusercontent.com/VoidAndCaffeine/mods-versions-file/main/mods.versions");
+    		vFileURL = new URL("https://github.com/VoidAndCaffeine/mods-versions-file/raw/main/mods.versions");
 			FileUtilities.downloadFile(vFileURL, vFileV);
-			/* 
-
-			if (FileUtilities.moveToMods(mods)) {
-				UpdateNotification.updatedScreen t = new UpdateNotification.updatedScreen("Mods have been updated and moved to your mods folder \n Press [OK] to close Minecraft and apply the update. \n \n Isn't this much less work :) -void");
-				t.dispose();
+			if (FileUtilities.isWindows()) {
+				VMLlog.info("[VML] Detected os is Windows.");
+				Process fileMover = new ProcessBuilder("java","FileMover.java").start();
 				System.exit(0);
-
 			} else {
-				UpdateNotification.updatedScreen t = new UpdateNotification.updatedScreen("Mods have been updated. \n\n Press [OK] to close Minecraft. \n Then go to your minecraft folder. \n move **everything** from the VMLStaging folder to the mods folder \n Lastly restart minecraft \n\n @me on discord if you have any issues -void\n");
-				t.dispose();
-				System.exit(-1);
-			}*/
+				VMLlog.info("[VML] Detected os is NOT Windows, assuming POSIX compatibily.");
+				Process fileMover = new ProcessBuilder("java","FileMover.java").start();
+				System.exit(0);
+			}
 		}
 		
 		if(dummyFile.exists()){
-			UpdateNotification.updatedScreen t = new UpdateNotification.updatedScreen("Mods have been updated. \n\n Press [OK] to close Minecraft. \n Then go to your minecraft folder. \n move **everything** from the VMLStaging folder to the mods folder \n Lastly restart minecraft \n\n @me on discord if you have any issues -void\n");
+			UpdateNotification.updatedScreen t = new UpdateNotification.updatedScreen("Mods have been updated but automatic install failed. \n\n Press [OK] to close Minecraft. \n Then go to your minecraft folder. \n move **everything** from the VMLStaging folder to the mods folder \n Lastly restart minecraft \n\n @me on discord if you have any issues -void\n");
 			t.dispose();
 			System.exit(0);
 		}

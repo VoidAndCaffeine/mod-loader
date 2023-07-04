@@ -22,6 +22,7 @@ public class FileUtilities {
     public static final org.slf4j.Logger VMLlog = LoggerFactory.getLogger("Void's Mod Loader");
     private static File VMlStaging = new File("VMLStaging");
     private static File modsFolder = new File("mods");
+    private static String OS = null;
 
     public static boolean downloadMod(URL url,String fileName){
             File file = new File(VMlStaging,fileName);
@@ -41,31 +42,11 @@ public class FileUtilities {
         return false;
     }
 
-    public static boolean moveToMods(String[][] mods){
-        try {
-            for (int i = 0; i < mods.length; i++) {
-                File stagedFile = new File(VMlStaging,mods[i][1]);
-                File destFile = new File(modsFolder,mods[i][1]);
-                if(!destFile.exists()){
-                    destFile.createNewFile();
-                }
-
-                stagedFile.renameTo(destFile);
-            }
-
-            /*
-            File dummyFile1 = new File(VMlStaging,mods[0][1]);
-            File dummyFile2 = new File(modsFolder,mods[0][1]);
-            dummyFile1.delete();
-            dummyFile2.delete();
-            */
-
-            return true;
-        } catch (Exception e) {
-
-            VMLlog.error("[VML]really wish this worked :'() {}",e); 
-            return false;
+    public static boolean isWindows(){
+        if(OS == null){
+            OS = System.getProperty("os.name");
         }
+        return OS.startsWith("Windows");
     }
 
     public static void downloadFile(URL url,File file) throws FileNotFoundException, IOException{
@@ -93,7 +74,7 @@ public class FileUtilities {
 
     public static String[][] processVFile(){
         try {
-            URL vFileURL = new URL("https://raw.githubusercontent.com/VoidAndCaffeine/mods-versions-file/main/mods.versions");
+            URL vFileURL = new URL("https://github.com/VoidAndCaffeine/mods-versions-file/raw/main/mods.versions");
 
             //VMLlog.info("file found");;
             ObjectInputStream in = new ObjectInputStream(vFileURL.openStream());
