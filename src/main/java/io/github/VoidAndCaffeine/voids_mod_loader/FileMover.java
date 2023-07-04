@@ -7,6 +7,13 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.concurrent.TimeUnit;
 
+import java.awt.Color;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+
 /**
  * FileMover
  */
@@ -61,19 +68,56 @@ public class FileMover {
 
         }
 
+
+    }
+
+    public static class movingScreen extends JFrame {
+        public movingScreen(String message){
+            this.setTitle("Moving Mods");
+            this.setLocationRelativeTo(null);
+            this.setAlwaysOnTop(true);
+            this.setSize(800, 600);
+            this.setBackground(new Color(255,255,255,255));
+            this.setVisible(true);
+
+            JLabel j = new JLabel(message);
+            this.add(j);
+        }
+    }
+
+
+    public static class updatedScreen extends JFrame {
+        public updatedScreen(String message){
+            this.setTitle("Mod Update Complete");
+            this.setLocationRelativeTo(null);
+            this.setAlwaysOnTop(true);
+            this.setSize(800, 600);
+            this.setBackground(new Color(255,255,255,255));
+            this.setVisible(true);
+
+            JOptionPane.showMessageDialog(null,message);
+        }
     }
 
     public static void main(String[] args) {
 
+
+        movingScreen mScreen = new movingScreen("Please wait while your mods are installed.");
+
         try {
             
-            TimeUnit.SECONDS.sleep(5);
+            TimeUnit.SECONDS.sleep(3);
         } catch (Exception e) {
             // TODO: handle exception
         }
 
         String[][] mods = vFileIN();
         moveToMods(mods);
-           
+
+        mScreen.dispose();
+        updatedScreen t = new updatedScreen("Your mods were sucessfuly updated! \n Please relaunch your game. :)  ");
+		t.dispose();
+		System.exit(0);
+
     }
 }

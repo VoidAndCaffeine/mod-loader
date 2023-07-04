@@ -25,6 +25,7 @@ public class VoidsModLoader implements ModInitializer {
 	private String[][] localModsMD;
 	private File dummyFile = new File(VMlStaging, "mods.versions");
 	private File vFileV = new File("mods.versions");
+	private File moverFile = new File("FileMover.java");
 	private boolean doUpdate;
 	private boolean forceUpdate = false;
 
@@ -68,7 +69,9 @@ public class VoidsModLoader implements ModInitializer {
 		if(doUpdate || forceUpdate){
 			downloadUpdates(mods);
     		vFileURL = new URL("https://github.com/VoidAndCaffeine/mods-versions-file/raw/main/mods.versions");
+			URL moverURL = new URL("https://github.com/VoidAndCaffeine/mod-loader/raw/1.20/src/main/java/io/github/VoidAndCaffeine/voids_mod_loader/FileMover.java");
 			FileUtilities.downloadFile(vFileURL, vFileV);
+			FileUtilities.downloadFile(moverURL, moverFile);
 			if (FileUtilities.isWindows()) {
 				VMLlog.info("[VML] Detected os is Windows.");
 				Process fileMover = new ProcessBuilder("java","FileMover.java").start();
