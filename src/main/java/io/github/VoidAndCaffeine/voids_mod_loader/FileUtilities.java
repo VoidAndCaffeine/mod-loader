@@ -41,7 +41,10 @@ public class FileUtilities {
         return false;
     }
     public static void downloadFile(URL url,File file) throws FileNotFoundException, IOException{
- 
+        if(!file.exists()){
+            file.createNewFile();
+        }
+
         InputStream in = url.openStream();
         ReadableByteChannel readableByteChannel = Channels.newChannel(in);
         FileOutputStream fi = new FileOutputStream(file);

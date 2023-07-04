@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import main.java.io.github.VoidAndCaffeine.voids_mod_loader.FileUtilities;
+import main.java.io.github.VoidAndCaffeine.voids_mod_loader.UpdateNotification;
 
 public class VoidsModLoader implements ModInitializer {
 	// This logger is used to write text to the console and the log file.
@@ -22,12 +23,18 @@ public class VoidsModLoader implements ModInitializer {
 
 	private String[][] mods;
 	private String[][] localModsMD;
-	private File vFileV = new File(VMlStaging, "mods.versions");
+	private File dummyFile = new File(VMlStaging, "mods.versions");
+	private File vFileV = new File("mods.versions");
 	private boolean doUpdate;
 	private boolean forceUpdate = false;
 
 	@Override
 	public void onInitialize(ModContainer mod) {
+		checkUpdates();
+	
+	}
+
+	public void checkUpdates() {
 		try {
 
             if(!VMlStaging.exists()){
@@ -49,24 +56,28 @@ public class VoidsModLoader implements ModInitializer {
 				VMLlog.info("[VML] updates found.");
 			}
 		} else{
-			downloadUpdates(mods);
 			VMLlog.info("[VML] Performing first install.");
-			doUpdate = forceUpdate = true;
-			VMLlog.info("[VML] Completed first install.");
+			forceUpdate = true;
 		}
 
 		if(new File("FORCEUPDATE.txt").exists()){
-			downloadUpdates(mods);
-			doUpdate = forceUpdate = true;
 			VMLlog.info("[VML] FORCEUPDATE.txt found, forcing a full update of all mods");
+			forceUpdate = true;
 		}
 
-		if(doUpdate && !(forceUpdate)){
+		if(doUpdate || forceUpdate){
 			downloadUpdates(mods);
 		}
-		if (doUpdate) {
+		if (doUpdate || forceUpdate) {
     		vFileURL = new URL("https://raw.githubusercontent.com/VoidAndCaffeine/mods-versions-file/main/mods.versions");
-			FileUtilities.downloadMod(vFileURL, "mods.versions");
+			FileUtilities.downloadFile(vFileURL, vFileV);
+		}
+		
+		if(dummyFile.exists()){
+			UpdateNotification.updatedScreen t = new UpdateNotification.updatedScreen();
+			t.dispose();
+			System.exit(0);
+
 		}
 
 		} catch (Exception e) {
@@ -83,9 +94,10 @@ public class VoidsModLoader implements ModInitializer {
 			
 		}*/
 		
+		
 	}
 
-		/*
+	/*
 	private String[][] findUpdates(){
 		String[][] toReturn = new String[Integer.parseInt(mods[0][0])][4];
 		int nextEmpty = 0;
@@ -120,8 +132,8 @@ public class VoidsModLoader implements ModInitializer {
 		}
 		return toReutrn;
 	}
+	*/
 
-		*/
 	private void downloadUpdates(String[][] updates){
 
 		for (int i = 0; i < updates.length; i++) {
@@ -132,7 +144,7 @@ public class VoidsModLoader implements ModInitializer {
 				}
 				VMLlog.info("[VML] Successfuly downloaded mod | {} | update", updates[i][0]);
 			} catch (MalformedURLException e) {
-				VMLlog.error("[VML] Check your wifi -void | error on mod {}!", updates[i][0]);
+				VMLlog.error("[VML] Check your wifi -void | error on mod {}! \n {}", updates[i][0],e);
 			}
 		}
 	}
