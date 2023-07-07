@@ -76,7 +76,7 @@ public class FileMover {
             this.setTitle("Moving Mods");
             this.setLocationRelativeTo(null);
             this.setAlwaysOnTop(true);
-            this.setSize(800, 600);
+            this.setSize(400, 200);
             this.setBackground(new Color(255,255,255,255));
             this.setVisible(true);
 
@@ -90,8 +90,8 @@ public class FileMover {
         public updatedScreen(String message){
             this.setTitle("Mod Update Complete");
             this.setLocationRelativeTo(null);
-            this.setAlwaysOnTop(true);
-            this.setSize(800, 600);
+            this.setAlwaysOnTop(false);
+            this.setSize(400, 200);
             this.setBackground(new Color(255,255,255,255));
             this.setVisible(true);
 
