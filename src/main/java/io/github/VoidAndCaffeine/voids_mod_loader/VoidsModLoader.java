@@ -72,9 +72,24 @@ public class VoidsModLoader implements ModInitializer {
 			URL moverURL = new URL("https://github.com/VoidAndCaffeine/mod-loader/raw/1.20/src/main/java/io/github/VoidAndCaffeine/voids_mod_loader/FileMover.java");
 			FileUtilities.downloadFile(vFileURL, vFileV);
 			FileUtilities.downloadFile(moverURL, moverFile);
+
 			if (FileUtilities.isWindows()) {
 				VMLlog.info("[VML] Detected os is Windows.");
+				VMLlog.info("[VML] Checking for FFMPEG");
+
+				File ffmpegZipFile = new File("FFMPEG.exe");
+
+				if(!ffmpegZipFile.exists()){
+					VMLlog.info("[VML] FFMPEG.exe is missing, Downloading now");
+					URL ffmpegURL = new URL("https://github.com/VoidAndCaffeine/mods-versions-file/raw/main/ffmpeg.exe");
+					FileUtilities.downloadFile(ffmpegURL, ffmpegZipFile);
+					VMLlog.info("[VML] FFMPEG is now installed");
+				}else{
+					VMLlog.info("[VML] FFMPEG is already installed.");
+				}
+					VMLlog.info("[VML] Launching file mover on a 3 second wait.");
 				Process fileMover = new ProcessBuilder("java","FileMover.java").start();
+					VMLlog.info("[VML] Closing to allow for safe movement of mods to mods folder.");
 				System.exit(0);
 			} else {
 				VMLlog.info("[VML] Detected os is NOT Windows, assuming POSIX compatibily.");

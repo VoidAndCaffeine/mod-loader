@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -15,6 +16,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
+
 /**
  * FileUtilities
  */
@@ -57,7 +63,7 @@ public class FileUtilities {
         InputStream in = url.openStream();
         ReadableByteChannel readableByteChannel = Channels.newChannel(in);
         FileOutputStream fi = new FileOutputStream(file);
-        fi.getChannel().transferFrom(readableByteChannel,0,1 << 24);
+        fi.getChannel().transferFrom(readableByteChannel,0,Long.MAX_VALUE);
        
     }
 
@@ -78,13 +84,13 @@ public class FileUtilities {
 
             //VMLlog.info("file found");;
             ObjectInputStream in = new ObjectInputStream(vFileURL.openStream());
-            VMLlog.info("[VML] Created Object input stream");;
+            VMLlog.info("[VML] Created Object input stream");
             
             String[][] working = (String[][]) in.readObject();
-            VMLlog.info("[VML] Stream to string");;
+            VMLlog.info("[VML] Stream to string");
             return working;
         } catch (IOException g) {
-            VMLlog.error("io exception in processVFile, you souldent see this. if you do, panic, then @me -- void");;
+            VMLlog.error("io exception in processVFile, you souldent see this. if you do, panic, then @me -- void");
         } catch (ClassNotFoundException h) {
             VMLlog.error("ClassNotFoundException in processVFile, you souldent see this. if you do, panic, then @me -- void");;
         }
