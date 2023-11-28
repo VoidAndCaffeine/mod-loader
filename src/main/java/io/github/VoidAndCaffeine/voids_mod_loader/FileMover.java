@@ -1,8 +1,6 @@
-package main.java.io.github.VoidAndCaffeine.voids_mod_loader;
+package io.github.VoidAndCaffeine.voids_mod_loader;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +29,7 @@ public class FileMover {
             oin.close();
             fin.close();
             return toReturn;
-    
+
         } catch (Exception e) {
             System.out.println(e);
             System.out.println("error in vFileIN()");
@@ -39,12 +37,30 @@ public class FileMover {
         }
     }
 
+	private static void delQFAPI() throws IOException {
+		File[] qfapis = modsFolder.listFiles(
+			new FilenameFilter() {
+				@Override
+				public boolean accept(File file, String s) {
+					return s.matches("qfapi.*jar");
+				}
+			}
+		);
+		if(qfapis == null){
+			return;
+		}
+        for (File qfapi : qfapis) {
+            qfapi.delete();
+        }
+	}
+
     public static void moveToMods(String[][] mods){
 
         try {
         for (int i = 0; i < mods.length; i++) {
                 File stagedFile = new File(VMlStaging,mods[i][1]);
                 File destFile = new File(modsFolder,mods[i][1]);
+				delQFAPI();
                 System.out.println("created directory files");
                 if (stagedFile.exists()) {
                     if(!destFile.exists()){
@@ -60,15 +76,12 @@ public class FileMover {
                     if(mods[i][0].equals("dummy file")){
                         destFile.delete();
                     }
-                    System.out.println("deleted origional");
+                    System.out.println("deleted original");
                 }
         }
         } catch (Exception e) {
                 System.out.println("error in moveToMods");
-
         }
-
-
     }
 
     public static class movingScreen extends JFrame {
@@ -105,7 +118,7 @@ public class FileMover {
         movingScreen mScreen = new movingScreen("Please wait while your mods are installed.");
 
         try {
-            
+
             TimeUnit.SECONDS.sleep(3);
         } catch (Exception e) {
             // TODO: handle exception
@@ -115,7 +128,7 @@ public class FileMover {
         moveToMods(mods);
 
         mScreen.dispose();
-        updatedScreen t = new updatedScreen("Your mods were sucessfuly updated! \n Please relaunch your game. :)  ");
+        updatedScreen t = new updatedScreen("Your mods were successfully updated! \n Please relaunch your game. :)  ");
 		t.dispose();
 		System.exit(0);
 

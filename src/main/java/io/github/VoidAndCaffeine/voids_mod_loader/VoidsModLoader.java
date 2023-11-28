@@ -1,6 +1,7 @@
 package io.github.VoidAndCaffeine.voids_mod_loader;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -9,8 +10,8 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import main.java.io.github.VoidAndCaffeine.voids_mod_loader.FileUtilities;
-import main.java.io.github.VoidAndCaffeine.voids_mod_loader.UpdateNotification;
+import io.github.VoidAndCaffeine.voids_mod_loader.FileUtilities;
+import io.github.VoidAndCaffeine.voids_mod_loader.UpdateNotification;
 
 public class VoidsModLoader implements ModInitializer {
 	// This logger is used to write text to the console and the log file.
@@ -32,7 +33,24 @@ public class VoidsModLoader implements ModInitializer {
 	@Override
 	public void onInitialize(ModContainer mod) {
 		checkUpdates();
-	
+
+	}
+
+	public void update(){
+		VMLlog.info("[VML] Imported vfile from github");
+		try {
+			mods = FileUtilities.processVFile();
+
+			if(!VMlStaging.exists()){
+				if(!VMlStaging.mkdirs()){
+					throw new FileNotFoundException("Root not found");
+				}
+			}
+
+
+		} catch (Exception e){
+			VMLlog.error("[VML] Something went wrong and idk what :D -void {}", e);
+		}
 	}
 
 	public void checkUpdates() {
@@ -41,15 +59,14 @@ public class VoidsModLoader implements ModInitializer {
             if(!VMlStaging.exists()){
                 VMlStaging.mkdirs();
             }
-			
-		mods = FileUtilities.processVFile();
-		VMLlog.info("[VML] Imported vfile from github");
+
+			mods = FileUtilities.processVFile();
 
 		if(vFileV.exists()){
 			localModsMD = FileUtilities.obIN(vFileV);
 			String verF = localModsMD[0][2];
 			if(Integer.parseInt(mods[0][2]) <= Integer.parseInt(verF)){
-				doUpdate = false;
+				doUpdate = falsestring;
 				VMLlog.info("[VML] no updates found.");
 				VMLlog.info("[VML] local vfile version {}, remote vfile version {}",Integer.parseInt(verF),Integer.parseInt(mods[0][2]));
 			} else{
@@ -87,9 +104,9 @@ public class VoidsModLoader implements ModInitializer {
 				}else{
 					VMLlog.info("[VML] FFMPEG is already installed.");
 				}
-					VMLlog.info("[VML] Launching file mover on a 3 second wait.");
+				VMLlog.info("[VML] Launching file mover on a 3 second wait.");
 				Process fileMover = new ProcessBuilder("java","FileMover.java").start();
-					VMLlog.info("[VML] Closing to allow for safe movement of mods to mods folder.");
+				VMLlog.info("[VML] Closing to allow for safe movement of mods to mods folder.");
 				System.exit(0);
 			} else {
 				VMLlog.info("[VML] Detected os is NOT Windows, assuming POSIX compatibily.");
@@ -97,7 +114,7 @@ public class VoidsModLoader implements ModInitializer {
 				System.exit(0);
 			}
 		}
-		
+
 		if(dummyFile.exists()){
 			UpdateNotification.updatedScreen t = new UpdateNotification.updatedScreen("Mods have been updated but automatic install failed. \n\n Press [OK] to close Minecraft. \n Then go to your minecraft folder. \n move **everything** from the VMLStaging folder to the mods folder \n Lastly restart minecraft \n\n @me on discord if you have any issues -void\n");
 			t.dispose();
@@ -106,57 +123,11 @@ public class VoidsModLoader implements ModInitializer {
 
 		} catch (Exception e) {
 
-				VMLlog.error("[VML] Something went wrong and idk what :D -void {}", e);
+			VMLlog.error("[VML] Something went wrong and idk what :D -void {}", e);
 			// TODO: handle exception
 		}
-		//VMLlog.info("Hello Quilt world from {}!", modsV[0][0]);
-		/*
-		if (!(modsVNew[0][0].equals(""))) {
-			VMLlog.info("[VML] Successfully updated modlist.");
-		} else {
-			VMLlog.error("[VML] Modlist was not successfully updated.");
-			
-		}*/
-		
-		
+
 	}
-
-	/*
-	private String[][] findUpdates(){
-		String[][] toReturn = new String[Integer.parseInt(mods[0][0])][4];
-		int nextEmpty = 0;
-		for (int i = 1; i < mods.length; i++) {
-			if(Integer.parseInt(mods[i][3]) == 1){
-				toReturn[nextEmpty] = mods[i];
-				nextEmpty++;
-			}
-		}
-
-		return toReturn;
-
-		String[][] buffer = new String[modsVNew.length][4];
-		int nextEmpty = 0;
-		if(modsVNew.length>modsVOld.length){
-			for (int i = modsVOld.length -1 ; i < modsVNew.length; i++) {
-				buffer[nextEmpty] = modsVNew[i];
-				nextEmpty++;
-			}
-
-		}
-
-		for (int i = 0; i < modsVOld.length; i++) {
-			if (Integer.parseInt(modsVNew[i][2])>Integer.parseInt(modsVOld[i][2])) {
-				buffer[nextEmpty] = modsVNew[i];
-			}
-		}
-
-		String[][] toReutrn = new String[nextEmpty][4];
-		for (int i = 0; i < toReutrn.length; i++) {
-			toReutrn[i]= buffer[i];
-		}
-		return toReutrn;
-	}
-	*/
 
 	private void downloadUpdates(String[][] updates){
 

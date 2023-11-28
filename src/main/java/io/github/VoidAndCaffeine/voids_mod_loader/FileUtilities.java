@@ -1,21 +1,13 @@
-package main.java.io.github.VoidAndCaffeine.voids_mod_loader;
+package io.github.VoidAndCaffeine.voids_mod_loader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -29,6 +21,7 @@ public class FileUtilities {
     private static File VMlStaging = new File("VMLStaging");
     private static File modsFolder = new File("mods");
     private static String OS = null;
+	private static File[] exist = existing();
 
     public static boolean downloadMod(URL url,String fileName){
             File file = new File(VMlStaging,fileName);
@@ -64,7 +57,7 @@ public class FileUtilities {
         ReadableByteChannel readableByteChannel = Channels.newChannel(in);
         FileOutputStream fi = new FileOutputStream(file);
         fi.getChannel().transferFrom(readableByteChannel,0,Long.MAX_VALUE);
-       
+
     }
 
     public static String[][] obIN(File file) throws FileNotFoundException, IOException{
@@ -72,27 +65,53 @@ public class FileUtilities {
             FileInputStream fin = new FileInputStream(file);
             ObjectInputStream oin = new ObjectInputStream(fin);
             return (String[][]) oin.readObject();
-    
+
         } catch (Exception e) {
             return null;
         }
     }
 
-    public static String[][] processVFile(){
+	private static File[] existing(){
+		return modsFolder.listFiles();
+	}
+
+	private static boolean checkMod(String mod) throws IOException {
+        for (File file : exist) {
+            if (file.getName().equals(mod)) {
+                return true;
+            }
+        }
+		return false;
+	}
+
+
+	public static String[][] processVFile(){
         try {
             URL vFileURL = new URL("https://github.com/VoidAndCaffeine/mods-versions-file/raw/main/mods.versions");
 
             //VMLlog.info("file found");;
             ObjectInputStream in = new ObjectInputStream(vFileURL.openStream());
             VMLlog.info("[VML] Created Object input stream");
-            
+
             String[][] working = (String[][]) in.readObject();
+
+			if(exist != null){
+				for (String[] mod : working) {
+					if (checkMod(mod[1])) {
+						mod[4] = "false";
+					}
+					if (mod[2]){
+
+					}
+				}
+			}
+
             VMLlog.info("[VML] Stream to string");
             return working;
         } catch (IOException g) {
-            VMLlog.error("io exception in processVFile, you souldent see this. if you do, panic, then @me -- void");
+            VMLlog.error("io exception in processVFile, you shouldn't see this. if you do, panic, then @me -- void");
         } catch (ClassNotFoundException h) {
-            VMLlog.error("ClassNotFoundException in processVFile, you souldent see this. if you do, panic, then @me -- void");;
+            VMLlog.error("ClassNotFoundException in processVFile, you shouldn't see this. if you do, panic, then @me -- void");;
         }
         String[][] notWorking = {{"1","2","3","4"}};
         return notWorking;

@@ -1,4 +1,4 @@
-package main.java.io.github.VoidAndCaffeine.voids_mod_loader;
+package io.github.VoidAndCaffeine.voids_mod_loader;
 
 import java.awt.Color;
 
@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 /**
  * UpdateNotification
  */
-public class UpdateNotification {   
+public class UpdateNotification {
     public static class updatedScreen extends JFrame {
         public updatedScreen(String message){
             this.setTitle("Mod Update Complete");
@@ -21,4 +21,4 @@ public class UpdateNotification {
             JOptionPane.showMessageDialog(null,message);
         }
     }
-} 
+}
