@@ -130,7 +130,7 @@ public class stringout {
 		);
 
 		mods.put("Replay Mod", new Mod(
-			new URI("https://www.replaymod.com/download/download_new.php?version=1.20.1-2.6.13").toURL(),
+			new URI("https://cdn.modrinth.com/data/Nv2fQJo5/versions/akFkhrL8/replaymod-1.20.1-2.6.13.jar").toURL(),
 			new File(VMlStaging,"replayMod.jar"),
 			26131201,
 			true)
