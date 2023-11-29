@@ -41,7 +41,7 @@ public class FileMover {
 			new FilenameFilter() {
 				@Override
 				public boolean accept(File file, String s) {
-					return s.matches("qfapi.*jar");
+					return s.matches("qfapi-.*jar");
 				}
 			}
 		);
@@ -56,7 +56,7 @@ public class FileMover {
     public static void moveToMods(String[][] mods){
 
         try {
-			delQFAPI();
+			//delQFAPI();
 			for (int i = 0; i < mods.length; i++) {
 				File stagedFile = new File(VMlStaging,mods[i][1]);
 				File destFile = new File(modsFolder,mods[i][1]);
