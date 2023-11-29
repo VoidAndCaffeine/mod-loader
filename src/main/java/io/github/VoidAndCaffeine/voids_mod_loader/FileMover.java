@@ -9,7 +9,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-
 /**
  * FileMover
  */
@@ -18,21 +17,6 @@ public class FileMover {
     private static File modsFolder = new File("mods");
 	private static File dummyFile = new File(VMlStaging, "mods.versions");
 
-    public static String[][] vFileIN(){
-        try {
-            FileInputStream fin = new FileInputStream(dummyFile);
-            ObjectInputStream oin = new ObjectInputStream(fin);
-            String[][] toReturn = (String[][]) oin.readObject();
-            oin.close();
-            fin.close();
-            return toReturn;
-
-        } catch (Exception e) {
-            System.out.println(e);
-            System.out.println("error in vFileIN()");
-            return null;
-        }
-    }
 
 	private static void delQFAPI() throws IOException {
 		File[] qfapis = modsFolder.listFiles(
@@ -51,31 +35,21 @@ public class FileMover {
         }
 	}
 
-    public static void moveToMods(String[][] mods){
-
+    public static void moveToMods(){
         try {
-			//delQFAPI();
-			for (int i = 0; i < mods.length; i++) {
-				File stagedFile = new File(VMlStaging,mods[i][1]);
-				File destFile = new File(modsFolder,mods[i][1]);
-				System.out.println("created directory files");
-				if (stagedFile.exists()) {
-					if(!destFile.exists()){
-						destFile.createNewFile();
-					}
-					System.out.println("created destination file");
+			delQFAPI();
+			File[] staged = VMlStaging.listFiles();
 
-					Files.move(stagedFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			for (File mod: staged){
+				File destFile = new File(modsFolder,mod.getName());
+				destFile.createNewFile();
+				System.out.println("created destination file");
+				Files.move(mod.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+				if(mod.equals(dummyFile)){
+					destFile.delete();
+				}
+			}
 
-					System.out.println("moved file" + mods[i][0]);
-
-					stagedFile.delete();
-					if(mods[i][0].equals("dummy file")){
-						destFile.delete();
-					}
-					System.out.println("deleted original");
-                }
-        	}
         } catch (Exception e) {
                 System.out.println("error in moveToMods");
         }
@@ -119,8 +93,7 @@ public class FileMover {
             // TODO: handle exception
         }
 
-        String[][] mods = vFileIN();
-        moveToMods(mods);
+        moveToMods();
 
         mScreen.dispose();
         updatedScreen t = new updatedScreen("Your mods were successfully updated! \n Please relaunch your game. :)  ");
