@@ -1,5 +1,3 @@
-package io.github.VoidAndCaffeine.voids_mod_loader;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
