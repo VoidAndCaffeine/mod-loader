@@ -1,32 +1,28 @@
 package io.github.VoidAndCaffeine.voids_mod_loader;
 
-import java.net.URI;
+import java.io.File;
+import java.net.URL;
 
 public class Mod {
-	private URI uri;
-	private String name;
-	private String fileName;
+	private URL url;
+	private File file;
 	private int version;
 	private boolean updated;
 	private boolean needsUpdate;
-	public Mod(URI newUri,String newName,String newFileName,int newVersion,boolean newUpdated){
-		uri = newUri;
-		name = newName;
-		fileName = newFileName;
+	public Mod(URL newUrl, File newFile, int newVersion, boolean newUpdated){
+		url = newUrl;
+		file = newFile;
 		version = newVersion;
 		updated = newUpdated;
 		needsUpdate = true;
 	}
 
 	// getters
-	public URI getUri() {
-		return uri;
+	public URL getUrl() {
+		return url;
 	}
-	public String getName() {
-		return name;
-	}
-	public String getFileName() {
-		return fileName;
+	public File getFile() {
+		return file;
 	}
 	public int getVersion() {
 		return version;
@@ -38,7 +34,7 @@ public class Mod {
 		return needsUpdate;
 	}
 	// setters
-	public boolean setNeedsUpdate(){
-		return needsUpdate;
+	public void setNeedsUpdate(){
+		needsUpdate = false;
 	}
 }

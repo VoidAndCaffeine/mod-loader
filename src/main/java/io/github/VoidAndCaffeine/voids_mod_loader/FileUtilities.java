@@ -1,120 +1,113 @@
 package io.github.VoidAndCaffeine.voids_mod_loader;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * FileUtilities
  */
 public class FileUtilities {
-    public static final org.slf4j.Logger VMLlog = LoggerFactory.getLogger("Void's Mod Loader");
-    private static File VMlStaging = new File("VMLStaging");
-    private static File modsFolder = new File("mods");
-    private static String OS = null;
-	private static File[] exist = existing();
-
-    public static boolean downloadMod(URL url,String fileName){
-            File file = new File(VMlStaging,fileName);
+	public static final org.slf4j.Logger VMLlog = VoidsModLoader.VMLlog;
+    public static boolean downloadMod(@NotNull Mod mod){
+		File file = mod.getFile();
         try {
-            if(!file.exists()){
-                file.createNewFile();
-            }
-
-            downloadFile(url, file);
-
+            downloadFile(mod.getUrl(), file);
             return true;
         } catch (MalformedURLException e) {
-            VMLlog.error("no network connection (or void messed up the url, but probably the internet thing -- definately -- 100%)");;
+            VMLlog.error("[VML] no network connection (or void messed up the url, but probably the internet thing -- definitely -- 100%)");;
         } catch (IOException f){
-            VMLlog.error("io exception in downloadFile, you souldent see this. if you do, panic, then @me -void");;
+			VMLlog.error("[VML] io exception in downloadFile, you shouldn't see this. if you do, panic, then @me -void");;
         }
         return false;
     }
 
     public static boolean isWindows(){
-        if(OS == null){
-            OS = System.getProperty("os.name");
-        }
-        return OS.startsWith("Windows");
+		try{
+			return System.getProperty("os.name").startsWith("Windows");
+		}catch (Exception e){
+			VMLlog.error("[VML] Failed to get OS assuming unix compatible");
+			return false;
+		}
     }
 
-    public static void downloadFile(URL url,File file) throws FileNotFoundException, IOException{
-        if(!file.exists()){
-            file.createNewFile();
-        }
-
+    public static void downloadFile(URL url, @NotNull File file) throws MalformedURLException, FileNotFoundException, IOException{
+		if(file.createNewFile()){
+			VMLlog.info("[VML] Creating new file: " + file.getName());
+		}else {
+			VMLlog.info("[VML] File " + file.getName() + " already exists, skipping");
+		}
+		VMLlog.info("[VML] Opening url stream");
         InputStream in = url.openStream();
+
+		VMLlog.info("[VML] Reading stream to file");
         ReadableByteChannel readableByteChannel = Channels.newChannel(in);
         FileOutputStream fi = new FileOutputStream(file);
         fi.getChannel().transferFrom(readableByteChannel,0,Long.MAX_VALUE);
 
+		VMLlog.info("[VML] Closing url stream");
+		in.close();
     }
 
-    public static String[][] obIN(File file) throws FileNotFoundException, IOException{
+    public static @Nullable HashMap<String,Mod> obIN(File file){
         try {
             FileInputStream fin = new FileInputStream(file);
             ObjectInputStream oin = new ObjectInputStream(fin);
-            return (String[][]) oin.readObject();
 
+			return (HashMap<String, Mod>) oin.readObject();
         } catch (Exception e) {
-            return null;
+			return null;
         }
     }
-
-	private static File[] existing(){
-		return modsFolder.listFiles();
+	public static void deleteMod(Mod mod){
+		throw new UnsupportedOperationException();
 	}
-
-	private static boolean checkMod(String mod) throws IOException {
-        for (File file : exist) {
-            if (file.getName().equals(mod)) {
-                return true;
-            }
-        }
-		return false;
-	}
-
-
-	public static String[][] processVFile(){
-        try {
-            URL vFileURL = new URL("https://github.com/VoidAndCaffeine/mods-versions-file/raw/main/mods.versions");
-
-            //VMLlog.info("file found");;
-            ObjectInputStream in = new ObjectInputStream(vFileURL.openStream());
-            VMLlog.info("[VML] Created Object input stream");
-
-            String[][] working = (String[][]) in.readObject();
-
-			if(exist != null){
-				for (String[] mod : working) {
-					if (checkMod(mod[1])) {
-						mod[4] = "false";
-					}
-					if (mod[2]){
-
-					}
-				}
+	public static void update(File vFile){
+		HashMap<String,Mod> mods = obIN(vFile);
+		for(Map.Entry<String,Mod> name: mods.entrySet()){
+			if(name.getValue().getNeedsUpdate()){
+				VMLlog.info("[VML] Mod: " + name + " needs an update, updating...");
+				downloadMod(name.getValue());
+			}else {
+				VMLlog.info("[VML] Mod: " + name + " was checked but did not need an update.");
 			}
+		}
+	}
 
-            VMLlog.info("[VML] Stream to string");
-            return working;
-        } catch (IOException g) {
-            VMLlog.error("io exception in processVFile, you shouldn't see this. if you do, panic, then @me -- void");
-        } catch (ClassNotFoundException h) {
-            VMLlog.error("ClassNotFoundException in processVFile, you shouldn't see this. if you do, panic, then @me -- void");;
-        }
-        String[][] notWorking = {{"1","2","3","4"}};
-        return notWorking;
-    }
+	public static boolean compare(File newVFile, File oldVFile){
+		boolean updated = false;
+		HashMap<String,Mod> nv = obIN(newVFile);
+		HashMap<String,Mod> ov = obIN(oldVFile);
 
+		if(ov == null){
+			VMLlog.error("[VML] old vfile was null, forcing full update");
+			return true;
+		}
+
+		assert nv != null;
+        for(Map.Entry<String, Mod> name : ov.entrySet()){
+			String key = name.getKey();
+			Mod mod = nv.get(key);
+
+			if(mod == null){
+				VMLlog.info("[VML] Mod: "+name.getKey()+" not found in new Vfile, deleting...");
+				deleteMod(name.getValue());
+			} else if (!mod.getUpdated()){
+				mod.setNeedsUpdate();
+			} else if (mod.getVersion() == name.getValue().getVersion() ) {
+				mod.setNeedsUpdate();
+			}else {
+				updated = true;
+			}
+		}
+
+		return updated;
+	}
 }

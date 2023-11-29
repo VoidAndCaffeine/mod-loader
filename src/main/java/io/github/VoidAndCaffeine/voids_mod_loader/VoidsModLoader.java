@@ -1,110 +1,93 @@
 package io.github.VoidAndCaffeine.voids_mod_loader;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.github.VoidAndCaffeine.voids_mod_loader.FileUtilities;
-import io.github.VoidAndCaffeine.voids_mod_loader.UpdateNotification;
 
 public class VoidsModLoader implements ModInitializer {
 	// This logger is used to write text to the console and the log file.
 	// It is considered best practice to use your mod name as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger VMLlog = LoggerFactory.getLogger("Void's Mod Loader");
-    private static File VMlStaging = new File("VMLStaging");
-
+	private static File VMlStaging = new File("VMLStaging");
 	private URL vFileURL;
-
-	private String[][] mods;
-	private String[][] localModsMD;
-	private File dummyFile = new File(VMlStaging, "mods.versions");
-	private File vFileV = new File("mods.versions");
+	private URL moverURL;
+	private File oldVFile = new File(VMlStaging, "mods.versions");
+	private File newVFile = new File("mods.versions");
 	private File moverFile = new File("FileMover.java");
-	private boolean doUpdate;
+	private boolean doUpdate = false;
 	private boolean forceUpdate = false;
 
 	@Override
 	public void onInitialize(ModContainer mod) {
 		checkUpdates();
-
 	}
 
-	public void update(){
-		VMLlog.info("[VML] Imported vfile from github");
+	public void checkUpdates(){
 		try {
-			mods = FileUtilities.processVFile();
-
-			if(!VMlStaging.exists()){
-				if(!VMlStaging.mkdirs()){
-					throw new FileNotFoundException("Root not found");
+			if(!VMlStaging.mkdirs()){
+				VMLlog.info("[VML] Creating new VMLStaging directory");
+			}
+			if(new File("FORCEUPDATE.txt").exists()){
+				VMLlog.info("[VML] FORCEUPDATE.txt found, forcing a full update of all mods");
+				forceUpdate = true;
+			}
+			if(newVFile.exists()){
+				newVFile.renameTo(oldVFile);
+				vFileURL = new URI("https://github.com/VoidAndCaffeine/mods-versions-file/raw/main/mods.versions").toURL();
+				moverURL = new URI("https://github.com/VoidAndCaffeine/mod-loader/raw/1.20/src/main/java/io/github/VoidAndCaffeine/voids_mod_loader/FileMover.java").toURL();
+				FileUtilities.downloadFile(vFileURL, newVFile);
+				FileUtilities.downloadFile(moverURL, moverFile);
+				if(FileUtilities.compare(newVFile,oldVFile)){
+					doUpdate = true;
 				}
+			} else{
+				VMLlog.info("[VML] Performing first install.");
+				forceUpdate = true;
+				vFileURL = new URI("https://github.com/VoidAndCaffeine/mods-versions-file/raw/main/mods.versions").toURL();
+				moverURL = new URI("https://github.com/VoidAndCaffeine/mod-loader/raw/1.20/src/main/java/io/github/VoidAndCaffeine/voids_mod_loader/FileMover.java").toURL();
+				FileUtilities.downloadFile(vFileURL, newVFile);
+				FileUtilities.downloadFile(moverURL, moverFile);
 			}
-
-
-		} catch (Exception e){
-			VMLlog.error("[VML] Something went wrong and idk what :D -void {}", e);
+			if (doUpdate||forceUpdate){
+				VMLlog.info("[VML] Updates needed, updating...");
+				FileUtilities.update(newVFile);
+				VMLlog.info("[VML] Updates completed, installing...");
+				install();
+			}else {
+				VMLlog.info("[VML] No updates needed allowing normal launch process.");
+			}
+		}catch (MalformedURLException l){
+			VMLlog.error("[VML] the hardcoded url is wrong",l);
+		}catch (URISyntaxException i){
+			VMLlog.error("[VML] the hardcoded uri is wrong",i);
+		}catch (Exception e){
+			VMLlog.error("[VML] Something went wrong and idk what",e);
 		}
 	}
 
-	public void checkUpdates() {
+	private void install(){
 		try {
-
-            if(!VMlStaging.exists()){
-                VMlStaging.mkdirs();
-            }
-
-			mods = FileUtilities.processVFile();
-
-		if(vFileV.exists()){
-			localModsMD = FileUtilities.obIN(vFileV);
-			String verF = localModsMD[0][2];
-			if(Integer.parseInt(mods[0][2]) <= Integer.parseInt(verF)){
-				doUpdate = falsestring;
-				VMLlog.info("[VML] no updates found.");
-				VMLlog.info("[VML] local vfile version {}, remote vfile version {}",Integer.parseInt(verF),Integer.parseInt(mods[0][2]));
-			} else{
-				doUpdate = true;
-				VMLlog.info("[VML] updates found.");
-			}
-		} else{
-			VMLlog.info("[VML] Performing first install.");
-			forceUpdate = true;
-		}
-
-		if(new File("FORCEUPDATE.txt").exists()){
-			VMLlog.info("[VML] FORCEUPDATE.txt found, forcing a full update of all mods");
-			forceUpdate = true;
-		}
-
-		if(doUpdate || forceUpdate){
-			downloadUpdates(mods);
-    		vFileURL = new URL("https://github.com/VoidAndCaffeine/mods-versions-file/raw/main/mods.versions");
-			URL moverURL = new URL("https://github.com/VoidAndCaffeine/mod-loader/raw/1.20/src/main/java/io/github/VoidAndCaffeine/voids_mod_loader/FileMover.java");
-			FileUtilities.downloadFile(vFileURL, vFileV);
-			FileUtilities.downloadFile(moverURL, moverFile);
-
 			if (FileUtilities.isWindows()) {
 				VMLlog.info("[VML] Detected os is Windows.");
 				VMLlog.info("[VML] Checking for FFMPEG");
-
-				File ffmpegZipFile = new File("FFMPEG.exe");
-
-				if(!ffmpegZipFile.exists()){
+				File ffmpegFile = new File("FFMPEG.exe");
+				if(!ffmpegFile.exists()){
 					VMLlog.info("[VML] FFMPEG.exe is missing, Downloading now");
-					URL ffmpegURL = new URL("https://github.com/VoidAndCaffeine/mods-versions-file/raw/main/ffmpeg.exe");
-					FileUtilities.downloadFile(ffmpegURL, ffmpegZipFile);
+					URL ffmpegURL = new URI("https://github.com/VoidAndCaffeine/mods-versions-file/raw/main/ffmpeg.exe").toURL();
+					FileUtilities.downloadFile(ffmpegURL, ffmpegFile);
 					VMLlog.info("[VML] FFMPEG is now installed");
 				}else{
 					VMLlog.info("[VML] FFMPEG is already installed.");
 				}
-				VMLlog.info("[VML] Launching file mover on a 3 second wait.");
 				Process fileMover = new ProcessBuilder("java","FileMover.java").start();
 				VMLlog.info("[VML] Closing to allow for safe movement of mods to mods folder.");
 				System.exit(0);
@@ -113,34 +96,10 @@ public class VoidsModLoader implements ModInitializer {
 				Process fileMover = new ProcessBuilder("java","FileMover.java").start();
 				System.exit(0);
 			}
-		}
-
-		if(dummyFile.exists()){
-			UpdateNotification.updatedScreen t = new UpdateNotification.updatedScreen("Mods have been updated but automatic install failed. \n\n Press [OK] to close Minecraft. \n Then go to your minecraft folder. \n move **everything** from the VMLStaging folder to the mods folder \n Lastly restart minecraft \n\n @me on discord if you have any issues -void\n");
-			t.dispose();
-			System.exit(0);
-		}
-
-		} catch (Exception e) {
-
-			VMLlog.error("[VML] Something went wrong and idk what :D -void {}", e);
-			// TODO: handle exception
-		}
-
-	}
-
-	private void downloadUpdates(String[][] updates){
-
-		for (int i = 0; i < updates.length; i++) {
-			try {
-				URL modurl = new URL(updates[i][3]);
-				if(FileUtilities.downloadMod(modurl, updates[i][1])){
-
-				}
-				VMLlog.info("[VML] Successfuly downloaded mod | {} | update", updates[i][0]);
-			} catch (MalformedURLException e) {
-				VMLlog.error("[VML] Check your wifi -void | error on mod {}! \n {}", updates[i][0],e);
-			}
+		}catch (MalformedURLException l){
+			VMLlog.error("[VML] the hardcoded url is wrong",l);
+		}catch (Exception e){
+			VMLlog.error("[VML] Something went wrong and idk what",e);
 		}
 	}
 }

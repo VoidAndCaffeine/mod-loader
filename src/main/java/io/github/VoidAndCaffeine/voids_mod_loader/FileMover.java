@@ -16,7 +16,6 @@ import javax.swing.JOptionPane;
  * FileMover
  */
 public class FileMover {
-
     private static File VMlStaging = new File("VMLStaging");
     private static File modsFolder = new File("mods");
 	private static File dummyFile = new File(VMlStaging, "mods.versions");
@@ -114,11 +113,9 @@ public class FileMover {
 
     public static void main(String[] args) {
 
-
         movingScreen mScreen = new movingScreen("Please wait while your mods are installed.");
 
         try {
-
             TimeUnit.SECONDS.sleep(3);
         } catch (Exception e) {
             // TODO: handle exception
