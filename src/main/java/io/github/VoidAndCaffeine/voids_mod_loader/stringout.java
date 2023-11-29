@@ -17,16 +17,16 @@ public class stringout {
 	private static HashMap<String, Mod> mods = new HashMap<String, Mod>();
 	private static File VMlStaging = new File("VMLStaging");
     public static void stringOut() throws IOException, URISyntaxException {
-		mods.put("Dummy File", new Mod(
-			new URI("https://github.com/VoidAndCaffeine/mods-versions-file/raw/main/mods.versions").toURL(),
-			new File(VMlStaging,"mods.versions"),
+		mods.put("Void's Mod Loader", new Mod(
+			new URI("https://github.com/VoidAndCaffeine/mod-loader/releases/download/2.0/voids_mod_loader.jar").toURL(),
+			new File(VMlStaging,"voids_mod_loader.jar"),
 			2000,
 			true)
 		);
 
 		mods.put("Quilted Fabric api", new Mod(
-			new URI("https://cdn.modrinth.com/data/qvIfYCYJ/versions/4JBkYQUF/qfapi-7.0.6_qsl-6.0.4_fapi-0.85.0_mc-1.20.1.jar").toURL(),
-			new File(VMlStaging,"qfapi"),
+			new URI("https://cdn.modrinth.com/data/qvIfYCYJ/versions/GjvWb8WQ/qfapi-7.4.0_qsl-6.1.2_fapi-0.90.0_mc-1.20.1.jar").toURL(),
+			new File(VMlStaging,"qfapi.jar"),
 			7061201,
 			true)
 		);
