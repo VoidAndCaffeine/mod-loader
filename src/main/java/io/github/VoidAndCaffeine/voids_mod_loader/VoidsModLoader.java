@@ -33,6 +33,9 @@ public class VoidsModLoader implements ModInitializer {
 
 	public void checkUpdates(){
 		try {
+			vFileURL = new URI("blob:https://github.com/3022158a-4828-4d28-ad2c-d155c62b007c").toURL();
+			moverURL = new URI("https://github.com/VoidAndCaffeine/mod-loader/raw/dev/src/main/java/io/github/VoidAndCaffeine/voids_mod_loader/FileMover.java").toURL();
+
 			if(!VMlStaging.mkdirs()){
 				VMLlog.info("[VML] Creating new VMLStaging directory");
 			}
@@ -42,8 +45,6 @@ public class VoidsModLoader implements ModInitializer {
 			}
 			if(newVFile.exists()){
 				newVFile.renameTo(oldVFile);
-				vFileURL = new URI("https://github.com/VoidAndCaffeine/mods-versions-file/raw/main/mods.versions").toURL();
-				moverURL = new URI("https://github.com/VoidAndCaffeine/mod-loader/raw/1.20/src/main/java/io/github/VoidAndCaffeine/voids_mod_loader/FileMover.java").toURL();
 				FileUtilities.downloadFile(vFileURL, newVFile);
 				FileUtilities.downloadFile(moverURL, moverFile);
 				if(FileUtilities.compare(newVFile,oldVFile)){
@@ -52,8 +53,6 @@ public class VoidsModLoader implements ModInitializer {
 			} else{
 				VMLlog.info("[VML] Performing first install.");
 				forceUpdate = true;
-				vFileURL = new URI("https://github.com/VoidAndCaffeine/mods-versions-file/raw/main/mods.versions").toURL();
-				moverURL = new URI("https://github.com/VoidAndCaffeine/mod-loader/raw/1.20/src/main/java/io/github/VoidAndCaffeine/voids_mod_loader/FileMover.java").toURL();
 				FileUtilities.downloadFile(vFileURL, newVFile);
 				FileUtilities.downloadFile(moverURL, moverFile);
 			}

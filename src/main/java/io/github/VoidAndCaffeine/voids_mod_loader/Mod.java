@@ -1,9 +1,11 @@
 package io.github.VoidAndCaffeine.voids_mod_loader;
 
 import java.io.File;
+import java.io.Serializable;
 import java.net.URL;
 
-public class Mod {
+public class Mod implements Serializable {
+
 	private URL url;
 	private File file;
 	private int version;
@@ -15,6 +17,11 @@ public class Mod {
 		version = newVersion;
 		updated = newUpdated;
 		needsUpdate = true;
+	}
+
+	@Override
+	public String toString(){
+		return "Mod{url="+url+",file="+file+",version="+version+",updated="+updated+",needsUpdate"+needsUpdate+"}";
 	}
 
 	// getters

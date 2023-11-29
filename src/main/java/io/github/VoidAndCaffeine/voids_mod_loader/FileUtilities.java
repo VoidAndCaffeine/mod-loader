@@ -56,22 +56,23 @@ public class FileUtilities {
 		in.close();
     }
 
-    public static @Nullable HashMap<String,Mod> obIN(File file){
+    public static @NotNull HashMap<String,Mod> obIN(File file){
         try {
             FileInputStream fin = new FileInputStream(file);
             ObjectInputStream oin = new ObjectInputStream(fin);
 
 			return (HashMap<String, Mod>) oin.readObject();
         } catch (Exception e) {
-			return null;
+			return new HashMap<String,Mod>();
         }
     }
 	public static void deleteMod(Mod mod){
 		throw new UnsupportedOperationException();
 	}
 	public static void update(File vFile){
-		HashMap<String,Mod> mods = obIN(vFile);
-		for(Map.Entry<String,Mod> name: mods.entrySet()){
+		HashMap<String,Mod> mods = obIN( vFile);
+
+        for(Map.Entry<String,Mod> name: mods.entrySet()){
 			if(name.getValue().getNeedsUpdate()){
 				VMLlog.info("[VML] Mod: " + name + " needs an update, updating...");
 				downloadMod(name.getValue());
