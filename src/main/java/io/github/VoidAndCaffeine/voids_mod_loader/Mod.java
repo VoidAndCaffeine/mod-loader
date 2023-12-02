@@ -8,20 +8,20 @@ public class Mod implements Serializable {
 
 	private URL url;
 	private File file;
-	private int version;
+	private String sha1;
+	private String sha256;
 	private boolean updated;
 	private boolean needsUpdate;
-	public Mod(URL newUrl, File newFile, int newVersion, boolean newUpdated){
+	public Mod(URL newUrl, File newFile, boolean wasUpdated){
 		url = newUrl;
 		file = newFile;
-		version = newVersion;
-		updated = newUpdated;
+		updated = wasUpdated;
 		needsUpdate = true;
 	}
 
 	@Override
 	public String toString(){
-		return "Mod{url="+url+",file="+file+",version="+version+",updated="+updated+",needsUpdate"+needsUpdate+"}";
+		return "Mod{url="+url+",file="+file+",sha1="+sha1+",sha256"+sha256+",needsUpdate"+needsUpdate+"}";
 	}
 
 	// getters
@@ -30,9 +30,6 @@ public class Mod implements Serializable {
 	}
 	public File getFile() {
 		return file;
-	}
-	public int getVersion() {
-		return version;
 	}
 	public boolean getUpdated(){
 		return updated;
@@ -43,5 +40,11 @@ public class Mod implements Serializable {
 	// setters
 	public void setNeedsUpdate(){
 		needsUpdate = false;
+	}
+	public void setSha1(String hash){
+		sha1 = hash;
+	}
+	public void setSha256(String hash){
+		sha256 = hash;
 	}
 }

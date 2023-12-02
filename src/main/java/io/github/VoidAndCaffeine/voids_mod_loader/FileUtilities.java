@@ -102,8 +102,6 @@ public class FileUtilities {
 				deleteMod(name.getValue());
 			} else if (!mod.getUpdated()){
 				mod.setNeedsUpdate();
-			} else if (mod.getVersion() == name.getValue().getVersion() ) {
-				mod.setNeedsUpdate();
 			}else {
 				updated = true;
 			}

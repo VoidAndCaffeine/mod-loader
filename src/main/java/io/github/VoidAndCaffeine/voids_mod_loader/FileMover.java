@@ -57,27 +57,27 @@ public class FileMover {
 
         try {
 			//delQFAPI();
-			for (int i = 0; i < mods.length; i++) {
-				File stagedFile = new File(VMlStaging,mods[i][1]);
-				File destFile = new File(modsFolder,mods[i][1]);
-				System.out.println("created directory files");
-				if (stagedFile.exists()) {
-					if(!destFile.exists()){
-						destFile.createNewFile();
-					}
-					System.out.println("created destination file");
+            for (String[] mod : mods) {
+                File stagedFile = new File(VMlStaging, mod[1]);
+                File destFile = new File(modsFolder, mod[1]);
+                System.out.println("created directory files");
+                if (stagedFile.exists()) {
+                    if (!destFile.exists()) {
+                        destFile.createNewFile();
+                    }
+                    System.out.println("created destination file");
 
-					Files.move(stagedFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    Files.move(stagedFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-					System.out.println("moved file" + mods[i][0]);
+                    System.out.println("moved file" + mod[0]);
 
-					stagedFile.delete();
-					if(mods[i][0].equals("dummy file")){
-						destFile.delete();
-					}
-					System.out.println("deleted original");
+                    stagedFile.delete();
+                    if (mod[0].equals("dummy file")) {
+                        destFile.delete();
+                    }
+                    System.out.println("deleted original");
                 }
-        	}
+            }
         } catch (Exception e) {
                 System.out.println("error in moveToMods");
         }
@@ -125,7 +125,7 @@ public class FileMover {
         moveToMods(mods);
 
         mScreen.dispose();
-        updatedScreen t = new updatedScreen("Your mods were successfully updated! \n Please relaunch your game. :)  ");
+        updatedScreen t = new updatedScreen("Your mods were successfully updated! \n Please relaunch your game. :)");
 		t.dispose();
 		System.exit(0);
 
