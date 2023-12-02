@@ -39,14 +39,19 @@ public class VoidsModLoader implements ModInitializer {
 			if(!VMlStaging.mkdirs()){
 				VMLlog.info("[VML] Creating new VMLStaging directory");
 			}
+
 			if(new File("FORCEUPDATE.txt").exists()){
 				VMLlog.info("[VML] FORCEUPDATE.txt found, forcing a full update of all mods");
 				forceUpdate = true;
 			}
+
 			if(newVFile.exists()){
+				VMLlog.info("[VML] mods.versions exists, copying to backup location");
 				newVFile.renameTo(oldVFile);
+				VMLlog.info("[VML] Downloading new mods.versions and filemover");
 				FileUtilities.downloadFile(vFileURL, newVFile);
 				FileUtilities.downloadFile(moverURL, moverFile);
+				VMLlog.info("[VML] Checking if an update is needed");
 				if(FileUtilities.compare(newVFile,oldVFile)){
 					doUpdate = true;
 				}
@@ -56,6 +61,8 @@ public class VoidsModLoader implements ModInitializer {
 				FileUtilities.downloadFile(vFileURL, newVFile);
 				FileUtilities.downloadFile(moverURL, moverFile);
 			}
+			VMLlog.info("[VML] doUpdate = "+doUpdate+" forceUpdate = "+forceUpdate);
+
 			if (doUpdate||forceUpdate){
 				VMLlog.info("[VML] Updates needed, updating...");
 				FileUtilities.update(newVFile);

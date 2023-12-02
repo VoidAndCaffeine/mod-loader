@@ -42,17 +42,17 @@ public class FileUtilities {
 		if(file.createNewFile()){
 			VMLlog.info("[VML] Creating new file: " + file.getName());
 		}else {
-			VMLlog.info("[VML] File " + file.getName() + " already exists, skipping");
+			VMLlog.info("[VML] File " + file.getName() + " already exists, skipping file creation");
 		}
 		VMLlog.info("[VML] Opening url stream");
         InputStream in = url.openStream();
 
-		VMLlog.info("[VML] Reading stream to file");
+		VMLlog.info("[VML] Reading stream to file "+file.getName());
         ReadableByteChannel readableByteChannel = Channels.newChannel(in);
         FileOutputStream fi = new FileOutputStream(file);
         fi.getChannel().transferFrom(readableByteChannel,0,Long.MAX_VALUE);
 
-		VMLlog.info("[VML] Closing url stream");
+		VMLlog.info("[VML] Closing url stream for file: "+file.getName());
 		in.close();
     }
 
@@ -83,7 +83,6 @@ public class FileUtilities {
 	}
 
 	public static boolean compare(File newVFile, File oldVFile){
-		boolean updated = false;
 		HashMap<String,Mod> nv = obIN(newVFile);
 		HashMap<String,Mod> ov = obIN(oldVFile);
 
@@ -104,20 +103,24 @@ public class FileUtilities {
 				VMLlog.info("[VML] Mod: "+name.getKey()+" does not need an update");
 				mod.setNeedsUpdate();
 			}else {
+				VMLlog.info("[VML] Mod: "+name.getKey()+" needs an update, updating all");
 				return true;
 			}
 
 		}
+
 		for(Map.Entry<String, Mod> name : nv.entrySet()){
             if (!ov.containsKey(name.getKey())) {
+				VMLlog.info("[VML] Mod: "+name.getKey()+" does not exist, updating all");
 				return true;
             }
 			if(!name.getValue().getDestFile().exists()){
+				VMLlog.info("[VML] Mod: "+name.getKey()+" is missing, updating all");
 				return true;
 			}
 			VMLlog.info("[VML] Mod : "+name.getKey()+" was checked but it exists and does not need an update");
 		}
-
+		VMLlog.info("[VML] All mods checked and none need updates");
 		return false;
 	}
 }
