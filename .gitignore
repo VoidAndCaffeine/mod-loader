@@ -4,6 +4,9 @@ build/
 out/
 classes/
 
+VMLStaging
+VMLStaging/
+
 # Quilt Loom
 remappedSrc/
 run/
