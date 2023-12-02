@@ -127,13 +127,12 @@ public class FileUtilities {
         for(Map.Entry<String, Mod> name : ov.entrySet()){
 			Mod mod = name.getValue();
 			String hashSHA1;
-			String hashSHA256;
 
 			if(mod == null){
 				VMLlog.info("[VML] Mod: "+name.getKey()+" not found in new Vfile, deleting...");
 				deleteMod(name.getValue());
 			}
-			hashSHA1 = takeHashSHA1(mod.getFile().toPath());
+			hashSHA1 = takeHashSHA1(mod.getDestFile().toPath());
 
 			if(hashSHA1==null){
 				VMLlog.info("[VML] hash was null updating all");
