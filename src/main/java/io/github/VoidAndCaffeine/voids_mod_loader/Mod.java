@@ -12,16 +12,19 @@ public class Mod implements Serializable {
 	private String sha256;
 	private boolean updated;
 	private boolean needsUpdate;
+	private File destFile;
+	private static File modsFolder = new File("mods");
 	public Mod(URL newUrl, File newFile, boolean wasUpdated){
 		url = newUrl;
 		file = newFile;
 		updated = wasUpdated;
 		needsUpdate = true;
+		destFile = new File(modsFolder,file.getName());
 	}
 
 	@Override
 	public String toString(){
-		return "Mod{url="+url+",file="+file+",sha1="+sha1+",sha256"+sha256+",needsUpdate"+needsUpdate+"}";
+		return "Mod{url="+url+",file="+file+",destFile="+destFile+",sha1="+sha1+",sha256="+sha256+",needsUpdate"+needsUpdate+"}";
 	}
 
 	// getters

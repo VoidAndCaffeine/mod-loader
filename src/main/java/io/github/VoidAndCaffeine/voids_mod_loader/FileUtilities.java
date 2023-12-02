@@ -73,8 +73,8 @@ public class FileUtilities {
 		HashMap<String,Mod> mods = obIN( vFile);
 
         for(Map.Entry<String,Mod> name: mods.entrySet()){
-			if(name.getValue().getNeedsUpdate()){
-				VMLlog.info("[VML] Mod: " + name + " needs an update, updating...");
+			if(name.getValue().getNeedsUpdate() || name.getValue().getFile().exists()){
+				VMLlog.info("[VML] Mod: " + name.getKey() + " needs an update, updating...");
 				downloadMod(name.getValue());
 			}else {
 				VMLlog.info("[VML] Mod: " + name + " was checked but did not need an update.");
@@ -105,6 +105,11 @@ public class FileUtilities {
 			}else {
 				updated = true;
 			}
+
+			if(!mod.getFile().exists()){
+				updated = true;
+			}
+
 		}
 
 		return updated;

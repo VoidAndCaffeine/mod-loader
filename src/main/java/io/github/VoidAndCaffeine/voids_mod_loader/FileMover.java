@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
  */
 public class FileMover {
     private static File VMlStaging = new File("VMLStaging");
-    private static File modsFolder = new File("mods");
+	private static File modsFolder = new File("mods");
 	private static File dummyFile = new File(VMlStaging, "mods.versions");
 
     public static String[][] vFileIN(){

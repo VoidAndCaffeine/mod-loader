@@ -33,7 +33,7 @@ public class VoidsModLoader implements ModInitializer {
 
 	public void checkUpdates(){
 		try {
-			vFileURL = new URI("https://github.com/VoidAndCaffeine/mod-loader/raw/1.20.1/mods.versions").toURL();
+			vFileURL = new URI("https://github.com/VoidAndCaffeine/mod-loader/raw/main/mods.versions").toURL();
 			moverURL = new URI("https://github.com/VoidAndCaffeine/mod-loader/raw/1.20.1/src/main/java/io/github/VoidAndCaffeine/voids_mod_loader/FileMover.java").toURL();
 
 			if(!VMlStaging.mkdirs()){
