@@ -143,6 +143,7 @@ public class FileUtilities {
 				nv.get(name.getKey()).setNeedsUpdate();
 			}else {
 				VMLlog.info("[VML] Mod: "+name.getKey()+" needs an update, updating all");
+				VMLlog.info("[VML] mod has was: " + mod.getSha1()+" should have been: " + hashSHA1);
 				return true;
 			}
 		}
