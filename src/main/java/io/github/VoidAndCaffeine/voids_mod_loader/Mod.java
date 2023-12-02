@@ -40,6 +40,9 @@ public class Mod implements Serializable {
 	public boolean getNeedsUpdate(){
 		return needsUpdate;
 	}
+	public File getDestFile(){
+		return destFile;
+	}
 	// setters
 	public void setNeedsUpdate(){
 		needsUpdate = false;

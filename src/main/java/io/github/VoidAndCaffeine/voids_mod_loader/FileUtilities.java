@@ -103,15 +103,20 @@ public class FileUtilities {
 			} else if (!mod.getUpdated()){
 				mod.setNeedsUpdate();
 			}else {
-				updated = true;
-			}
-
-			if(!mod.getFile().exists()){
-				updated = true;
+				return true;
 			}
 
 		}
+		for(Map.Entry<String, Mod> name : nv.entrySet()){
+            if (!ov.containsKey(name.getKey())) {
+				return true;
+            }
 
-		return updated;
+			if(!name.getValue().getDestFile().exists()){
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
