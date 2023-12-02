@@ -101,6 +101,7 @@ public class FileUtilities {
 				VMLlog.info("[VML] Mod: "+name.getKey()+" not found in new Vfile, deleting...");
 				deleteMod(name.getValue());
 			} else if (!mod.getUpdated()){
+				VMLlog.info("[VML] Mod: "+name.getKey()+" does not need an update");
 				mod.setNeedsUpdate();
 			}else {
 				return true;
@@ -111,10 +112,10 @@ public class FileUtilities {
             if (!ov.containsKey(name.getKey())) {
 				return true;
             }
-
 			if(!name.getValue().getDestFile().exists()){
 				return true;
 			}
+			VMLlog.info("[VML] Mod : "+name.getKey()+" was checked but it exists and does not need an update");
 		}
 
 		return false;
