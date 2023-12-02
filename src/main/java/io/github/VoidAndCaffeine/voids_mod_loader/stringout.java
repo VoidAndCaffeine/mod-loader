@@ -20,7 +20,7 @@ public class stringout {
 	private static File VMlStaging = new File("VMLStaging");
     public static void stringOut() throws IOException, URISyntaxException {
 		mods.put("Void's Mod Loader", new Mod(
-			new URI("https://github.com/VoidAndCaffeine/mod-loader/releases/download/2.2.2/voids_mod_loader.jar").toURL(),
+			new URI("https://github.com/VoidAndCaffeine/mod-loader/releases/download/2.2.3/voids_mod_loader.jar").toURL(),
 			new File(VMlStaging,"voids_mod_loader.jar"),
 			true)
 		);
