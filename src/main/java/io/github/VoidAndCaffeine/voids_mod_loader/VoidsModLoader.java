@@ -61,8 +61,6 @@ public class VoidsModLoader implements ModInitializer {
 				FileUtilities.downloadFile(vFileURL, newVFile);
 				FileUtilities.downloadFile(moverURL, moverFile);
 			}
-			VMLlog.info("[VML] doUpdate = "+doUpdate+" forceUpdate = "+forceUpdate);
-
 			if (doUpdate||forceUpdate){
 				VMLlog.info("[VML] Updates needed, updating...");
 				FileUtilities.update(newVFile);
