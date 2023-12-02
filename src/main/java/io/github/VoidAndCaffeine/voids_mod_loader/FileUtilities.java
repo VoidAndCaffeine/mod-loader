@@ -16,6 +16,7 @@ import java.util.Map;
  */
 public class FileUtilities {
 	public static final org.slf4j.Logger VMLlog = VoidsModLoader.VMLlog;
+	private static HashMap<String,Mod> modsFile;
     public static boolean downloadMod(@NotNull Mod mod){
 		File file = mod.getFile();
         try {
@@ -70,17 +71,26 @@ public class FileUtilities {
 		throw new UnsupportedOperationException();
 	}
 	public static void update(File vFile){
-		HashMap<String,Mod> mods = obIN( vFile);
-
-        for(Map.Entry<String,Mod> name: mods.entrySet()){
-			if(name.getValue().getNeedsUpdate() || name.getValue().getFile().exists()){
+		modsFile = obIN( vFile);
+        for(Map.Entry<String,Mod> name: modsFile.entrySet()){
+			if(name.getValue().getNeedsUpdate() || !name.getValue().getDestFile().exists()){
 				VMLlog.info("[VML] Mod: " + name.getKey() + " needs an update, updating...");
 				downloadMod(name.getValue());
+				modsFile.get(name.getKey()).setNeedsUpdate();
 			}else {
 				VMLlog.info("[VML] Mod: " + name + " was checked but did not need an update.");
 			}
 		}
 	}
+
+
+	public static void saveVfile() throws IOException {
+		FileOutputStream fs = new FileOutputStream("mods.versions");
+		ObjectOutputStream out = new ObjectOutputStream(fs);
+		out.writeObject(modsFile);
+		out.close();
+	}
+
 
 	public static boolean compare(File newVFile, File oldVFile){
 		HashMap<String,Mod> nv = obIN(newVFile);
@@ -93,20 +103,17 @@ public class FileUtilities {
 
 		assert nv != null;
         for(Map.Entry<String, Mod> name : ov.entrySet()){
-			String key = name.getKey();
-			Mod mod = nv.get(key);
+			Mod mod = name.getValue();
 
 			if(mod == null){
 				VMLlog.info("[VML] Mod: "+name.getKey()+" not found in new Vfile, deleting...");
 				deleteMod(name.getValue());
-			} else if (!mod.getUpdated()){
+			} else if (!mod.getNeedsUpdate()){
 				VMLlog.info("[VML] Mod: "+name.getKey()+" does not need an update");
-				mod.setNeedsUpdate();
 			}else {
 				VMLlog.info("[VML] Mod: "+name.getKey()+" needs an update, updating all");
 				return true;
 			}
-
 		}
 
 		for(Map.Entry<String, Mod> name : nv.entrySet()){

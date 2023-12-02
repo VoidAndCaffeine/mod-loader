@@ -72,9 +72,6 @@ public class FileMover {
                     System.out.println("moved file" + mod[0]);
 
                     stagedFile.delete();
-                    if (mod[0].equals("dummy file")) {
-                        destFile.delete();
-                    }
                     System.out.println("deleted original");
                 }
             }

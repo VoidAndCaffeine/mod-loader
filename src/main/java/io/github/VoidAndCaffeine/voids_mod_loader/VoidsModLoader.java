@@ -47,12 +47,15 @@ public class VoidsModLoader implements ModInitializer {
 
 			if(newVFile.exists()){
 				VMLlog.info("[VML] mods.versions exists, copying to backup location");
-				newVFile.renameTo(oldVFile);
+				if(!newVFile.renameTo(oldVFile)){
+					VMLlog.error("[VML] error moving old vfile to new vfile location");
+				}
 				VMLlog.info("[VML] Downloading new mods.versions and filemover");
 				FileUtilities.downloadFile(vFileURL, newVFile);
 				FileUtilities.downloadFile(moverURL, moverFile);
 				VMLlog.info("[VML] Checking if an update is needed");
-				if(FileUtilities.compare(newVFile,oldVFile)){
+				boolean updates = FileUtilities.compare(newVFile,oldVFile);
+				if(updates){
 					doUpdate = true;
 				}
 			} else{
@@ -64,6 +67,8 @@ public class VoidsModLoader implements ModInitializer {
 			if (doUpdate||forceUpdate){
 				VMLlog.info("[VML] Updates needed, updating...");
 				FileUtilities.update(newVFile);
+				VMLlog.info("[VML] Saving vfile");
+				FileUtilities.saveVfile();
 				VMLlog.info("[VML] Updates completed, installing...");
 				install();
 			}else {
