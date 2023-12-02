@@ -40,6 +40,15 @@ public class Mod implements Serializable {
 	public boolean getNeedsUpdate(){
 		return needsUpdate;
 	}
+
+	public String getSha1() {
+		return sha1;
+	}
+
+	public String getSha256() {
+		return sha256;
+	}
+
 	public File getDestFile(){
 		return destFile;
 	}

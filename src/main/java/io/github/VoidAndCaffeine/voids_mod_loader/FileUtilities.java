@@ -4,10 +4,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,8 +94,26 @@ public class FileUtilities {
 		out.writeObject(modsFile);
 		out.close();
 	}
-
-
+	public static String takeHashSHA256(Path modPath){
+		try {
+			byte[] fileBites = Files.readAllBytes(modPath);
+			byte[] hash = MessageDigest.getInstance("SHA256").digest(fileBites);
+			return new BigInteger(1,hash).toString(16);
+		}catch (Exception e){
+			VMLlog.error("[VML] Exception While Hashing",e);
+			return null;
+		}
+	}
+	public static String takeHashSHA1(Path modPath){
+		try {
+			byte[] fileBites = Files.readAllBytes(modPath);
+			byte[] hash = MessageDigest.getInstance("SHA1").digest(fileBites);
+			return new BigInteger(1,hash).toString(16);
+		}catch (Exception e){
+			VMLlog.error("[VML] Exception While Hashing",e);
+			return null;
+		}
+	}
 	public static boolean compare(File newVFile, File oldVFile){
 		HashMap<String,Mod> nv = obIN(newVFile);
 		HashMap<String,Mod> ov = obIN(oldVFile);
@@ -104,12 +126,22 @@ public class FileUtilities {
 		assert nv != null;
         for(Map.Entry<String, Mod> name : ov.entrySet()){
 			Mod mod = name.getValue();
+			String hashSHA1;
+			String hashSHA256;
 
 			if(mod == null){
 				VMLlog.info("[VML] Mod: "+name.getKey()+" not found in new Vfile, deleting...");
 				deleteMod(name.getValue());
-			} else if (!mod.getNeedsUpdate()){
+			}
+			hashSHA1 = takeHashSHA1(mod.getFile().toPath());
+
+			if(hashSHA1==null){
+				VMLlog.info("[VML] hash was null updating all");
+				return true;
+			}
+			if(mod.getSha1().equals(hashSHA1)){
 				VMLlog.info("[VML] Mod: "+name.getKey()+" does not need an update");
+				nv.get(name.getKey()).setNeedsUpdate();
 			}else {
 				VMLlog.info("[VML] Mod: "+name.getKey()+" needs an update, updating all");
 				return true;

@@ -55,6 +55,8 @@ public class VoidsModLoader implements ModInitializer {
 				FileUtilities.downloadFile(moverURL, moverFile);
 				VMLlog.info("[VML] Checking if an update is needed");
 				boolean updates = FileUtilities.compare(newVFile,oldVFile);
+				VMLlog.info("[VML] Saving vfile");
+				FileUtilities.saveVfile();
 				if(updates){
 					doUpdate = true;
 				}
@@ -67,8 +69,6 @@ public class VoidsModLoader implements ModInitializer {
 			if (doUpdate||forceUpdate){
 				VMLlog.info("[VML] Updates needed, updating...");
 				FileUtilities.update(newVFile);
-				VMLlog.info("[VML] Saving vfile");
-				FileUtilities.saveVfile();
 				VMLlog.info("[VML] Updates completed, installing...");
 				install();
 			}else {

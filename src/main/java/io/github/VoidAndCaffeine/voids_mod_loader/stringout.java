@@ -9,6 +9,8 @@ import java.net.URISyntaxException;
 
 import io.github.VoidAndCaffeine.voids_mod_loader.Mod;
 import java.util.HashMap;
+import java.util.Map;
+
 /**
  * stringout
  */
@@ -192,6 +194,21 @@ public class stringout {
 		);
     }
 
+	public static void getHashes(){
+		VMlStaging.mkdirs();
+
+		try {
+			for (Map.Entry<String,Mod> entry:mods.entrySet()) {
+				FileUtilities.downloadFile(entry.getValue().getUrl(),entry.getValue().getFile());
+
+				mods.get(entry.getKey()).setSha1(FileUtilities.takeHashSHA1(entry.getValue().getFile().toPath()));
+			}
+		}catch (Exception e){
+			System.out.println("something went wrong");
+		}
+
+	}
+
     public static void saveStringFile() throws IOException {
         FileOutputStream fs = new FileOutputStream("mods.versions");
         ObjectOutputStream out = new ObjectOutputStream(fs);
@@ -202,6 +219,7 @@ public class stringout {
     public static void main(String[] args) {
         try {
             stringOut();
+			getHashes();
 			saveStringFile();
         } catch (Exception e) {
             System.out.println("there was an exception");
